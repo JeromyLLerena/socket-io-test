@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      .chat-info{position: absolute; bottom: 50px;}
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <label class="chat-info"></label>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+
+      $('#m').keypress(function(){
+        if ($('.chat-info').text() == '') {
+          socket.emit('writing', socket.id);
+        }
+      });
+
+      $('form').submit(function(){
+        socket.emit('chat message', [socket.id, $('#m').val()]);
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        var strong = $('<strong>');
+        var li = $('<li>'+ msg[0] + ': ' + msg[1] + '</li>');
+        var row = $;
+        //var row = $('<li> <strong>' + msg[0] + ': </strong>' + msg[1] + ' </li>');
+        if (socket.id != msg[0]) {
+          strong.html(li);
+          row = strong;
+        } else {
+          row = li;
+        }
+
+        $('#messages').append(row);
+      });
+      socket.on('writing', function(info){
+        if ($('.chat-info').text() == '') {
+          $('.chat-info').text(info);
+        }
+        //$('.chat-info').text();
+        setTimeout(function(){
+          if ($('.chat-info').text().length > 0) {
+            $('.chat-info').text('');
+          }
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>
