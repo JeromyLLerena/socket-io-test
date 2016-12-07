@@ -13,38 +13,32 @@
 @section('footer')
     <script src="{{ asset('js/socket.io.js') }}"></script>
     <script>
-        //var socket = io('http://localhost:3000');
         var socket = io('http://socket-io-test.app:3000');
         $('button').click(function(){
             var msg_string = $('#m').val();
             $('#m').val('');
-            console.log(msg_string);
             $.ajax({
                 url : "send",
                 type: "POST",
-                data : {message: msg_string},
+                data : {message: msg_string, id: socket.id},
             });
             return false;
         });
 
-        socket.on("chat-channel:App\\Events\\NewMessage", function(msg){
+        socket.on("chat-channel:App\\Events\\NewMessage", function(response){
 
-            console.log(msg);
         var strong = $('<strong>');
-        var data = msg.data;
-        var li = $('<li>'+ data.message + '</li>');
-        var row = $;
-        //var row = $('<li> <strong>' + msg[0] + ': </strong>' + msg[1] + ' </li>');
-        if (socket.id != msg[0]) {
+        var data = response.data;
+        console.log(data);
+        var li = $('<li>' + data.id + ': ' + data.message + ' </li>');
+        if (socket.id != data.id) {
           strong.html(li);
           row = strong;
         } else {
           row = li;
         }
-
         $('#messages').append(row);
-            // increase the power everytime we load test route
-            //$('#power').text(parseInt($('#power').text()) + parseInt(message.data.power));
+
         });
 
     </script>

@@ -21,10 +21,11 @@ class NewMessage implements ShouldBroadcast
 
     public $data;
 
-    public function __construct($message)
+    public function __construct($data)
     {
         $this->data = [
-            'message' => $message
+            'id' => $data['id'],
+            'message' => $data['msg']
         ];
     }
 

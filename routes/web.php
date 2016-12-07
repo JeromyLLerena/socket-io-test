@@ -38,7 +38,11 @@ Route::get('chat', function(){
 });
 
 Route::post('send', function(){
-    $msg = Request::get('message');
-	event(new App\Events\NewMessage($msg));
+    $data = [
+        'msg' => Request::get('message'),
+        'id' => Request::get('id')
+    ];
+
+	event(new App\Events\NewMessage($data));
 	return 'message created';
 });
